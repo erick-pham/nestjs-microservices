@@ -27,6 +27,33 @@
       "compilerOptions": {
         "tsConfigPath": "apps/ms-gateway/tsconfig.app.json"
       }
+    },
+    "ms-common": {
+      "type": "library",
+      "root": "libs/ms-common",
+      "entryFile": "index",
+      "sourceRoot": "libs/ms-common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/ms-common/tsconfig.lib.json"
+      }
+    },
+    "ms-auth": {
+      "type": "application",
+      "root": "apps/ms-auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/ms-auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ms-auth/tsconfig.app.json"
+      }
+    },
+    "utils": {
+      "type": "library",
+      "root": "libs/utils",
+      "entryFile": "index",
+      "sourceRoot": "libs/utils/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/utils/tsconfig.lib.json"
+      }
     }
   }
 }

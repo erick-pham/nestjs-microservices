@@ -71,3 +71,11 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Docs
+- Create an app: nest generate app my-app
+- Start an app: nest start my-app
+- Build an app: nest build my-app
+
+- Create a library: nest generate library my-library
+- Build library: nest build my-library

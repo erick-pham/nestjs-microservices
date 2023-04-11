@@ -17,6 +17,19 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {}
+    "paths": {
+      "@app/ms-common": [
+        "libs/ms-common/src"
+      ],
+      "@app/ms-common/*": [
+        "libs/ms-common/src/*"
+      ],
+      "@app/utils": [
+        "libs/utils/src"
+      ],
+      "@app/utils/*": [
+        "libs/utils/src/*"
+      ]
+    }
   }
 }

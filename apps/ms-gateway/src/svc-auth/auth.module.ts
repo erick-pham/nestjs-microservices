@@ -1,16 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MsGatewayController } from './ms-gateway.controller';
-import { MsGatewayService } from './ms-gateway.service';
-import { AuthModule } from './svc-auth/auth.module';
-import { MS_AUTH_SERVICE_NAME } from './common/constants';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthController } from './auth/auth.controller';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MS_AUTH_SERVICE_NAME } from '../common/constants';
+import { ApiKeyController } from './apikey/apikey.controller';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule],
-  controllers: [MsGatewayController],
+  imports: [ConfigModule.forRoot()],
   providers: [
-    MsGatewayService,
     {
       provide: MS_AUTH_SERVICE_NAME,
       inject: [ConfigService],
@@ -24,6 +21,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
         });
       }
     }
-  ]
+  ],
+  controllers: [AuthController, ApiKeyController]
 })
-export class MsGatewayModule {}
+export class AuthModule {}
