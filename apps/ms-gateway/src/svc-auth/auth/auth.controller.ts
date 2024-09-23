@@ -1,6 +1,13 @@
-import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  OnModuleInit,
+  Post,
+  Res
+} from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafka } from '@nestjs/microservices';
 import { Response as ResponseExpress } from 'express';
 import {
   AUTH_PATTERN,
@@ -17,8 +24,15 @@ import { MS_AUTH_SERVICE_NAME } from '../../common/constants';
 
 @ApiTags('Authentication')
 @Controller('auth')
-export class AuthController {
-  constructor(@Inject(MS_AUTH_SERVICE_NAME) private client: ClientProxy) {}
+export class AuthController implements OnModuleInit {
+  constructor(
+    @Inject(MS_AUTH_SERVICE_NAME) private readonly authClient: ClientKafka
+  ) {}
+
+  async onModuleInit() {
+    this.authClient.subscribeToResponseOf(AUTH_PATTERN.Login.cmd);
+    await this.authClient.connect();
+  }
 
   @Post('register')
   async register(
@@ -26,7 +40,7 @@ export class AuthController {
     @Res() response: ResponseExpress
   ): Promise<ResponseExpress> {
     const rs = await lastValueFrom(
-      this.client.send<RegisterResponse>(AUTH_PATTERN.Register, body)
+      this.authClient.send<RegisterResponse>(AUTH_PATTERN.Register.cmd, body)
     );
 
     return response.status(rs.status).json(rs);
@@ -43,7 +57,10 @@ export class AuthController {
     @Res() response: ResponseExpress
   ): Promise<ResponseExpress> {
     const rs = await lastValueFrom(
-      this.client.send<LoginResponse>(AUTH_PATTERN.Login, body)
+      this.authClient.send<LoginResponse>(
+        AUTH_PATTERN.Login.cmd,
+        JSON.stringify(body)
+      )
     );
 
     return response.status(rs.status).json(rs);

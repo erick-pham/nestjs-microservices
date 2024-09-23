@@ -13,7 +13,7 @@ export class MsAuthController {
     return this.msAuthService.getHello();
   }
 
-  @MessagePattern({ cmd: 'ping' })
+  @MessagePattern('ping')
   ping() {
     return of('pong').pipe(delay(200));
   }

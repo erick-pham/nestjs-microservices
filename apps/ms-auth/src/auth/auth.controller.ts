@@ -1,5 +1,12 @@
-import { Controller, Inject } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { Controller, Inject, OnModuleInit } from '@nestjs/common';
+import {
+  ClientKafka,
+  Ctx,
+  EventPattern,
+  KafkaContext,
+  MessagePattern,
+  Payload
+} from '@nestjs/microservices';
 import {
   AUTH_PATTERN,
   LoginResponse,
@@ -9,19 +16,22 @@ import {
 import { LoginRequestDto, RegisterRequestDto } from './auth.dto';
 
 import { AuthService } from './auth.service';
-
 @Controller('auth')
 export class AuthController {
   @Inject(AuthService)
   private readonly service: AuthService;
 
-  @MessagePattern(AUTH_PATTERN.Register)
+  @MessagePattern(AUTH_PATTERN.Register.cmd)
   Register(payload: RegisterRequestDto): Promise<RegisterResponse> {
     return this.service.register(payload);
   }
 
-  @MessagePattern(AUTH_PATTERN.Login)
-  login(payload: LoginRequestDto): Promise<LoginResponse> {
+  @MessagePattern('login')
+  login(
+    @Payload() payload: LoginRequestDto,
+    @Ctx() context: KafkaContext
+  ): Promise<LoginResponse> {
+    console.log(`Topic: ${context.getTopic()}`, payload);
     return this.service.login(payload);
   }
 

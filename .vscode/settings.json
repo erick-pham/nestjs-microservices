@@ -1,3 +1,11 @@
 {
-  "cSpell.words": ["Aabc", "apikey", "jwtid", "typeorm", "uuidv", "websockets"]
+  "cSpell.words": [
+    "Aabc",
+    "apikey",
+    "jwtid",
+    "typeorm",
+    "uuidv",
+    "websockets"
+  ],
+  "editor.formatOnSave": true
 }
