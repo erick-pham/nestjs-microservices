@@ -9,7 +9,7 @@ import {
 } from 'apps/ms-auth/src/apikey/apikey.interface';
 import { RequestApiKeyDto, RevokeApiKeyDto } from './apikey.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { MS_AUTH_SERVICE_NAME } from '../../common/constants';
+import { MS_AUTH_SERVICE_NAME } from '@app/ms-common/interface/auth.interface';
 
 @ApiTags('Authentication-ApiKey')
 @Controller('apikey')

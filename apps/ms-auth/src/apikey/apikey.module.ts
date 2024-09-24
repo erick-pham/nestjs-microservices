@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ApiKeyController } from './apikey.controller';
 import { ApiKeyService } from './apikey.service';
 import { ApiKeyEntity } from './apikey.entity';
@@ -7,7 +7,7 @@ import { ApiKeyRepository } from './apikey.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from '../common/constants';
 import { AuthModule } from '../auth/auth.module';
-
+import { CacheModule } from '@nestjs/cache-manager';
 @Module({
   imports: [
     AuthModule,

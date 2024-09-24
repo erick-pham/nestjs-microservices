@@ -2,7 +2,7 @@ import { IBaseResponse } from '@app/ms-common/response/message-pattern-response'
 
 export const APIKEY_PATTERN = {
   Generate: { cmd: 'generate' },
-  Revoke: { cmd: 'Revoke' }
+  Revoke: { cmd: 'revoke' }
 };
 
 export interface IApiKeyRequest {

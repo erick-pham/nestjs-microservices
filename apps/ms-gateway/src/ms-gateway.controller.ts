@@ -14,6 +14,7 @@ export class MsGatewayController {
 
   @Get('/ping-all')
   pingAll() {
+    return this.msGatewayService.pingMSAuth();
     return zip(this.msGatewayService.pingMSAuth()).pipe(
       map(([pongMSAuth]) => ({
         pongMSAuth

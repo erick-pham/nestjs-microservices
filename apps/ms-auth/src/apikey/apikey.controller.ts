@@ -11,12 +11,12 @@ import { Controller } from '@nestjs/common';
 export class ApiKeyController {
   constructor(private readonly apikeyService: ApiKeyService) {}
 
-  @MessagePattern(APIKEY_PATTERN.Generate)
+  @MessagePattern(APIKEY_PATTERN.Generate.cmd)
   async generateApiKeyAndSecret(payload: IApiKeyRequest) {
     return this.apikeyService.generateKeyAndSecret(payload);
   }
 
-  @MessagePattern(APIKEY_PATTERN.Revoke)
+  @MessagePattern(APIKEY_PATTERN.Revoke.cmd)
   async revoke(payload: IApiKeyRevokeReq) {
     return this.apikeyService.revoke(payload.apiKey);
   }

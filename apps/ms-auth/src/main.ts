@@ -2,6 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { Transport, KafkaOptions } from '@nestjs/microservices';
 import { MsAuthModule } from './ms-auth.module';
 import { ClassSerializerInterceptor } from '@nestjs/common';
+import { getKafkaConfig } from '@app/utils/kafka';
 
 async function bootstrap() {
   const app = await NestFactory.create(MsAuthModule);
@@ -10,20 +11,10 @@ async function bootstrap() {
   app.connectMicroservice<KafkaOptions>({
     transport: Transport.KAFKA,
     options: {
+      ...getKafkaConfig(),
       client: {
-        clientId: 'auth', // auth-server
-        brokers: ['rw.kfchs00fl92sqk9k8laq.at.double.cloud:9091'],
-        ssl: true,
-        sasl: {
-          mechanism: 'plain', // scram-sha-256 or scram-sha-512
-          username: 'admin',
-          password: 'rEsvMUAqYQQtQZP7'
-        }
-      },
-      consumer: {
-        groupId: 'auth-consumer', // auth-consumer-server
-        metadataMaxAge: 5000,
-        allowAutoTopicCreation: true
+        ...getKafkaConfig().client,
+        clientId: 'auth-server'
       }
     }
   });

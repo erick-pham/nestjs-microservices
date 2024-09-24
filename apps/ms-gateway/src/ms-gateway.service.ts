@@ -1,18 +1,13 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { MS_AUTH_SERVICE_NAME } from './common/constants';
-import { ClientKafka } from '@nestjs/microservices';
 import { map } from 'rxjs/operators';
+import { MyClientKafka } from '@app/utils/kafka';
+import { MS_AUTH_SERVICE_NAME } from '@app/ms-common/interface/auth.interface';
 
 @Injectable()
-export class MsGatewayService implements OnModuleInit {
+export class MsGatewayService {
   constructor(
-    @Inject(MS_AUTH_SERVICE_NAME) private readonly authClient: ClientKafka
+    @Inject(MS_AUTH_SERVICE_NAME) private readonly authClient: MyClientKafka
   ) {}
-
-  async onModuleInit() {
-    this.authClient.subscribeToResponseOf('ping');
-    await this.authClient.connect();
-  }
 
   async pingMSAuth() {
     const startTs = Date.now();

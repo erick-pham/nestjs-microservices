@@ -4,7 +4,7 @@ import {
   LoginResponse,
   RegisterRequest,
   ValidateRequest
-} from 'apps/ms-auth/src/auth/auth.interface';
+} from '@app/ms-common/interface/auth.interface';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginRequestDto implements LoginRequest {

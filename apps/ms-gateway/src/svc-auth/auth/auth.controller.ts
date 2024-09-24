@@ -1,38 +1,26 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  OnModuleInit,
-  Post,
-  Res
-} from '@nestjs/common';
+import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
-import { ClientKafka } from '@nestjs/microservices';
 import { Response as ResponseExpress } from 'express';
 import {
-  AUTH_PATTERN,
   RegisterResponse,
-  LoginResponse
-} from 'apps/ms-auth/src/auth/auth.interface';
+  LoginResponse,
+  MS_AUTH_SERVICE_NAME,
+  MS_AUTH_MESSAGE_PATTERN
+} from '@app/ms-common/interface/auth.interface';
 import {
   RegisterRequestDto,
   LoginRequestDto,
   LoginResponseDto
 } from './auth.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { MS_AUTH_SERVICE_NAME } from '../../common/constants';
+import { MyClientKafka } from '@app/utils/kafka';
 
 @ApiTags('Authentication')
 @Controller('auth')
-export class AuthController implements OnModuleInit {
+export class AuthController {
   constructor(
-    @Inject(MS_AUTH_SERVICE_NAME) private readonly authClient: ClientKafka
+    @Inject(MS_AUTH_SERVICE_NAME) private readonly authClient: MyClientKafka
   ) {}
-
-  async onModuleInit() {
-    this.authClient.subscribeToResponseOf(AUTH_PATTERN.Login.cmd);
-    await this.authClient.connect();
-  }
 
   @Post('register')
   async register(
@@ -40,7 +28,10 @@ export class AuthController implements OnModuleInit {
     @Res() response: ResponseExpress
   ): Promise<ResponseExpress> {
     const rs = await lastValueFrom(
-      this.authClient.send<RegisterResponse>(AUTH_PATTERN.Register.cmd, body)
+      this.authClient.send<RegisterResponse>(
+        MS_AUTH_MESSAGE_PATTERN.Register,
+        body
+      )
     );
 
     return response.status(rs.status).json(rs);
@@ -57,9 +48,9 @@ export class AuthController implements OnModuleInit {
     @Res() response: ResponseExpress
   ): Promise<ResponseExpress> {
     const rs = await lastValueFrom(
-      this.authClient.send<LoginResponse>(
-        AUTH_PATTERN.Login.cmd,
-        JSON.stringify(body)
+      this.authClient.sendMessage<LoginResponse>(
+        MS_AUTH_MESSAGE_PATTERN.Login,
+        body
       )
     );
 

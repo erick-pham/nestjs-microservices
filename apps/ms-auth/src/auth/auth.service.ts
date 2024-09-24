@@ -8,14 +8,15 @@ import {
   ValidateRequestDto
 } from './auth.dto';
 import { AuthEntity } from './auth.entity';
+
+import MessagePatternResponse from '@app/ms-common/response/message-pattern-response';
+import { BCRYPT_SALT_ROUND } from '../common/constants';
+import { AuthRepository } from './auth.repository';
 import {
   LoginResponse,
   RegisterResponse,
   ValidateResponse
-} from './auth.interface';
-import MessagePatternResponse from '@app/ms-common/response/message-pattern-response';
-import { BCRYPT_SALT_ROUND } from '../common/constants';
-import { AuthRepository } from './auth.repository';
+} from '@app/ms-common/interface/auth.interface';
 
 @Injectable()
 export class AuthService {

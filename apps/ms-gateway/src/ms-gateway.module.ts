@@ -1,41 +1,53 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MsGatewayController } from './ms-gateway.controller';
 import { MsGatewayService } from './ms-gateway.service';
 import { AuthModule } from './svc-auth/auth.module';
-import { MS_AUTH_SERVICE_NAME } from './common/constants';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientKafka } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
+import { getKafkaConfig, MyClientKafka } from '@app/utils/kafka';
+import { ClsModule, ClsService } from 'nestjs-cls';
+import { LoggerMiddleware } from './middleware/logger.middleware';
+import {
+  MS_AUTH_SERVICE_NAME,
+  MS_AUTH_MESSAGE_PATTERN
+} from '@app/ms-common/interface/auth.interface';
 
 @Global()
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule],
+  imports: [
+    ConfigModule.forRoot(),
+    ClsModule.forRoot({
+      middleware: {
+        // automatically mount the
+        // ClsMiddleware for all routes
+        mount: true,
+        // and use the setup method to
+        // provide default store values.
+        setup: (cls, req) => {
+          cls.set('requestId', req.headers['Request-Id']);
+        }
+      }
+    }),
+    AuthModule
+  ],
   controllers: [MsGatewayController],
   providers: [
-    MsGatewayService,
     {
       provide: MS_AUTH_SERVICE_NAME,
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return new ClientKafka({
-          client: {
-            clientId: 'auth', // auth-client
-            brokers: ['rw.kfchs00fl92sqk9k8laq.at.double.cloud:9091'],
-            ssl: true,
-            sasl: {
-              mechanism: 'plain', // scram-sha-256 or scram-sha-512
-              username: 'admin',
-              password: 'rEsvMUAqYQQtQZP7'
-            }
-          },
-          consumer: {
-            groupId: 'auth-consumer', // auth-consumer-client
-            metadataMaxAge: 3000,
-            allowAutoTopicCreation: true
-          }
+      inject: [ClsService],
+      useFactory: (cls: ClsService) => {
+        return new MyClientKafka({
+          options: getKafkaConfig(),
+          clsService: cls,
+          subscribeToResponseOfPatterns: Object.values(MS_AUTH_MESSAGE_PATTERN)
         });
       }
-    }
+    },
+    MsGatewayService
   ],
   exports: [MS_AUTH_SERVICE_NAME]
 })
-export class MsGatewayModule {}
+export class MsGatewayModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

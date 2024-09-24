@@ -1,38 +1,45 @@
-import { Controller, Inject, OnModuleInit } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import {
-  ClientKafka,
   Ctx,
-  EventPattern,
   KafkaContext,
   MessagePattern,
   Payload
 } from '@nestjs/microservices';
-import {
-  AUTH_PATTERN,
-  LoginResponse,
-  RegisterResponse
-} from './auth.interface';
 
 import { LoginRequestDto, RegisterRequestDto } from './auth.dto';
 
 import { AuthService } from './auth.service';
+import { MyKafkaRes } from '@app/utils/kafka';
+import {
+  MS_AUTH_MESSAGE_PATTERN,
+  RegisterResponse
+} from '@app/ms-common/interface/auth.interface';
 @Controller('auth')
 export class AuthController {
   @Inject(AuthService)
   private readonly service: AuthService;
 
-  @MessagePattern(AUTH_PATTERN.Register.cmd)
+  @MessagePattern(MS_AUTH_MESSAGE_PATTERN.Register)
   Register(payload: RegisterRequestDto): Promise<RegisterResponse> {
     return this.service.register(payload);
   }
 
-  @MessagePattern('login')
-  login(
+  @MessagePattern(MS_AUTH_MESSAGE_PATTERN.Login)
+  async login(
     @Payload() payload: LoginRequestDto,
     @Ctx() context: KafkaContext
-  ): Promise<LoginResponse> {
-    console.log(`Topic: ${context.getTopic()}`, payload);
-    return this.service.login(payload);
+  ): Promise<MyKafkaRes> {
+    const loginRes = await this.service.login(payload);
+    const kafkaRequestId = String(
+      context.getMessage().headers['kafkaRequestId']
+    );
+
+    return {
+      value: loginRes,
+      headers: {
+        kafkaRequestId: kafkaRequestId
+      }
+    };
   }
 
   // @Put('login')
