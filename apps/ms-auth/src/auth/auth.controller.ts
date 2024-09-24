@@ -9,7 +9,7 @@ import {
 import { LoginRequestDto, RegisterRequestDto } from './auth.dto';
 
 import { AuthService } from './auth.service';
-import { MyKafkaRes } from '@app/utils/kafka';
+import { MyKafkaRes } from '@app/ms-common/kafka';
 import {
   MS_AUTH_MESSAGE_PATTERN,
   RegisterResponse

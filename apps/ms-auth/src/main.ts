@@ -2,7 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { Transport, KafkaOptions } from '@nestjs/microservices';
 import { MsAuthModule } from './ms-auth.module';
 import { ClassSerializerInterceptor } from '@nestjs/common';
-import { getKafkaConfig } from '@app/utils/kafka';
+import { getKafkaConfig } from '@app/ms-common/kafka';
 
 async function bootstrap() {
   const app = await NestFactory.create(MsAuthModule);

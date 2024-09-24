@@ -1,10 +1,11 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
+
+import { ApiProperty } from '@nestjs/swagger';
 import {
   LoginRequest,
   RegisterRequest,
   ValidateRequest
-} from './auth.interface';
-import { ApiProperty } from '@nestjs/swagger';
+} from '@app/ms-common/interface/auth.interface';
 
 export class LoginRequestDto implements LoginRequest {
   @IsEmail()

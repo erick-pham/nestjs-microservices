@@ -13,7 +13,7 @@ import {
   LoginResponseDto
 } from './auth.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { MyClientKafka } from '@app/utils/kafka';
+import { MyClientKafka } from '@app/ms-common/kafka';
 
 @ApiTags('Authentication')
 @Controller('auth')

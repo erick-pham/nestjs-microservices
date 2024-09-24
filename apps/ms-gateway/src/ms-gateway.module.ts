@@ -3,7 +3,7 @@ import { MsGatewayController } from './ms-gateway.controller';
 import { MsGatewayService } from './ms-gateway.service';
 import { AuthModule } from './svc-auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { getKafkaConfig, MyClientKafka } from '@app/utils/kafka';
+import { getKafkaConfig, MyClientKafka } from '@app/ms-common/kafka';
 import { ClsModule, ClsService } from 'nestjs-cls';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import {

@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { map } from 'rxjs/operators';
-import { MyClientKafka } from '@app/utils/kafka';
+import { MyClientKafka } from '@app/ms-common/kafka';
 import { MS_AUTH_SERVICE_NAME } from '@app/ms-common/interface/auth.interface';
 
 @Injectable()
