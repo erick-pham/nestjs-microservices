@@ -23,13 +23,12 @@ export const getKafkaConfig = (
         //   username: 'admin',
         //   password: 'rEsvMUAqYQQtQZP7'
         // }
-        brokers: ['localhost:9094'],
-        allowAutoTopicCreation: false
+        brokers: ['localhost:9094']
       },
       consumer: {
         groupId: 'auth-consumer', // auth-consumer-client
         metadataMaxAge: 3000,
-        allowAutoTopicCreation: false
+        allowAutoTopicCreation: true
       }
     },
     options
