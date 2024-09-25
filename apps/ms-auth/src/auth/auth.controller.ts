@@ -19,9 +19,30 @@ export class AuthController {
   @Inject(AuthService)
   private readonly service: AuthService;
 
+  private formatResponse = (data: any, kafkaRequestId: string) => {
+    return {
+      ...data,
+      requestId: kafkaRequestId
+    };
+    // return {
+    //   value: data,
+    //   headers: {
+    //     kafkaRequestId: kafkaRequestId
+    //   }
+    // };
+  };
+
   @MessagePattern(MS_AUTH_MESSAGE_PATTERN.Register)
-  Register(payload: RegisterRequestDto): Promise<RegisterResponse> {
-    return this.service.register(payload);
+  async Register(
+    payload: RegisterRequestDto,
+    @Ctx() context: KafkaContext
+  ): Promise<RegisterResponse> {
+    const kafkaRequestId = String(
+      context.getMessage().headers['kafkaRequestId']
+    );
+
+    const registerRes = await this.service.register(payload);
+    return this.formatResponse(registerRes, kafkaRequestId);
   }
 
   @MessagePattern(MS_AUTH_MESSAGE_PATTERN.Login)
@@ -29,17 +50,25 @@ export class AuthController {
     @Payload() payload: LoginRequestDto,
     @Ctx() context: KafkaContext
   ): Promise<MyKafkaRes> {
-    const loginRes = await this.service.login(payload);
     const kafkaRequestId = String(
       context.getMessage().headers['kafkaRequestId']
     );
-
-    return {
-      value: loginRes,
-      headers: {
-        kafkaRequestId: kafkaRequestId
-      }
-    };
+    try {
+      // Process the message
+      const loginRes = await this.service.login(payload);
+      return this.formatResponse(loginRes, kafkaRequestId);
+    } catch (error) {
+      console.log(error);
+      // handle log error here
+      return this.formatResponse(
+        {
+          error: true,
+          status: 500,
+          errorMessages: error.message
+        },
+        kafkaRequestId
+      );
+    }
   }
 
   // @Put('login')

@@ -28,7 +28,7 @@ export class AuthController {
     @Res() response: ResponseExpress
   ): Promise<ResponseExpress> {
     const rs = await lastValueFrom(
-      this.authClient.send<RegisterResponse>(
+      this.authClient.sendMessage<RegisterResponse>(
         MS_AUTH_MESSAGE_PATTERN.Register,
         body
       )

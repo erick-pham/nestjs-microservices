@@ -28,7 +28,14 @@ export const getKafkaConfig = (
       consumer: {
         groupId: 'auth-consumer', // auth-consumer-client
         metadataMaxAge: 3000,
-        allowAutoTopicCreation: true
+        allowAutoTopicCreation: true,
+        retry: {
+          retries: 3, // Number of retries before failing
+          initialRetryTime: 300, // Initial wait time before the first retry in ms
+          factor: 2, // Exponential factor for retry timing (backoff strategy)
+          multiplier: 1.5, // Multiplier for each retry
+          maxRetryTime: 5000 // Maximum retry time in ms
+        }
       }
     },
     options
@@ -73,7 +80,10 @@ export class MyClientKafka extends ClientKafka implements OnModuleInit {
     console.log('Generated Kafka Request ID:', kafkaRequestId);
 
     return this.send<T>(topic, {
-      value: JSON.stringify(message),
+      value: JSON.stringify({
+        ...message,
+        requestId: kafkaRequestId
+      }),
       headers: {
         kafkaRequestId: kafkaRequestId
       }
